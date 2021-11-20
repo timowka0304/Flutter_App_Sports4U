@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:sport_app/theme/app_theme.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -29,29 +31,34 @@ class Result extends StatefulWidget {
 class Activity {
   String type;
   String name;
+  int difference;
   late List<int> priority;
 
-  Activity(this.type, this.name, value_1, value_2, value_3, value_4, value_5) {
+  Activity(this.type, this.name, value_1, value_2, value_3, value_4, value_5,
+      this.difference) {
     priority = [value_1, value_2, value_3, value_4, value_5];
   }
 }
 
 class _ResultState extends State<Result> {
-  var martialArtsH = Activity("health", "Боевые искусства", 2, 2, 2, 2, 2);
-  var volleyballH = Activity("health", "Волейбол", 2, 1, 2, 1, 2);
-  var swimmingH = Activity("health", "Плавание", 2, 2, 2, 2, 2);
-  var footballH = Activity("health", "Футбол", 2, 1, 2, 1, 2);
-  var hockeyH = Activity("health", "Хоккей", 2, 1, 2, 1, 2);
-
-  var martialArtsP = Activity("phisisc", "Боевые искусства", 2, 2, 2, 2, 2);
-  var volleyballP = Activity("phisisc", "Волейбол", 1, 2, 2, 1, 1);
-  var swimmingP = Activity("phisisc", "Плавание", 2, 1, 2, 1, 1);
-  var footballP = Activity("phisisc", "Футбол", 2, 1, 2, 2, 2);
-  var hockeyP = Activity("phisisc", "Хоккей", 2, 1, 2, 2, 2);
+  List<Activity> listActivities = [
+    Activity("health", "Боевые искусства", 2, 2, 2, 2, 2, 0),
+    Activity("health", "Волейбол", 2, 1, 2, 1, 2, 0),
+    Activity("health", "Плавание", 2, 2, 2, 2, 2, 0),
+    Activity("health", "Футбол", 2, 1, 2, 1, 2, 0),
+    Activity("health", "Хоккей", 2, 1, 2, 1, 2, 0),
+    Activity("phisisc", "Боевые искусства", 2, 2, 2, 2, 2, 0),
+    Activity("phisisc", "Волейбол", 1, 2, 2, 1, 1, 0),
+    Activity("phisisc", "Плавание", 2, 1, 2, 1, 1, 0),
+    Activity("phisisc", "Футбол", 2, 1, 2, 2, 2, 0),
+    Activity("phisisc", "Хоккей", 2, 1, 2, 2, 2, 0)
+  ];
 
   String btnLblOne = "111";
   String btnLblTwo = "2222";
   String btnLblThree = "33";
+
+  late Timer _timer;
 
   var name = "name";
   var phone = "phone";
@@ -63,7 +70,32 @@ class _ResultState extends State<Result> {
   @override
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
+    _showLoadinWindow();
     super.initState();
+  }
+
+  void _showLoadinWindow() async {
+    showDialog(
+        context: context,
+        builder: (BuildContext builderContext) {
+          _timer = Timer(const Duration(seconds: 5), () {
+            Navigator.of(context).pop();
+          });
+
+          return AlertDialog(
+            backgroundColor: AppTheme.colors.mainOrange,
+            title: const Text('Пожалуйста, подождите.',
+                style: TextStyle(color: Colors.white)),
+            content: const SingleChildScrollView(
+              child: Text('Подбираем виды спорта на основе вашего выбора.',
+                  style: TextStyle(color: Colors.white)),
+            ),
+          );
+        }).then((val) {
+      if (_timer.isActive) {
+        _timer.cancel();
+      }
+    });
   }
 
   @override

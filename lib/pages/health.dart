@@ -1,12 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:sport_app/theme/app_theme.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:sport_app/theme/colors.dart';
 import 'package:sport_app/widgets/radio_option.dart';
-
 import 'package:fluttertoast/fluttertoast.dart';
-
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -30,6 +31,7 @@ class _HealthState extends State<Health> {
   String _groupValue4 = 'none';
   String _groupValue5 = 'none';
   late FToast fToast;
+  late Timer _timer;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -400,8 +402,7 @@ class _HealthState extends State<Health> {
                                     (_groupValue5 != 'none')) {
                                   fToast.removeCustomToast();
                                   fToast.removeQueuedCustomToasts();
-                                  _buildFutureBuilder();
-                                  _buildStreamBuilder();
+                                  //_showLoadinWindow();
                                   //saveData();
                                   //Navigator.pushReplacementNamed(
                                   //context, '/result');
@@ -422,47 +423,29 @@ class _HealthState extends State<Health> {
     );
   }
 
-  Widget _buildFutureBuilder() {
-    return Center(
-      child: FutureBuilder<int>(
-        future: _calculateSquare(10),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done)
-            return Text("Square = ${snapshot.data}");
+  // void _showLoadinWindow() async {
+  //   showDialog(
+  //       context: context,
+  //       builder: (BuildContext builderContext) {
+  //         _timer = Timer(const Duration(seconds: 5), () {
+  //           Navigator.of(context).pop();
+  //         });
 
-          return CircularProgressIndicator();
-        },
-      ),
-    );
-  }
-
-  // used by FutureBuilder
-  Future<int> _calculateSquare(int num) async {
-    await Future.delayed(Duration(seconds: 5));
-    return num * num;
-  }
-
-  Widget _buildStreamBuilder() {
-    return Center(
-      child: StreamBuilder<int>(
-        stream: _stopwatch(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.active)
-            return Text("Stopwatch = ${snapshot.data}");
-
-          return CircularProgressIndicator();
-        },
-      ),
-    );
-  }
-
-  // used by StreamBuilder
-  Stream<int> _stopwatch() async* {
-    while (true) {
-      await Future.delayed(Duration(seconds: 1));
-      yield _count++;
-    }
-  }
+  //         return AlertDialog(
+  //           backgroundColor: AppTheme.colors.mainOrange,
+  //           title: const Text('Пожалуйста, подождите.',
+  //               style: TextStyle(color: Colors.white)),
+  //           content: const SingleChildScrollView(
+  //             child: Text('Подбираем виды спорта на основе вашего выбора.',
+  //                 style: TextStyle(color: Colors.white)),
+  //           ),
+  //         );
+  //       }).then((val) {
+  //     if (_timer.isActive) {
+  //       _timer.cancel();
+  //     }
+  //   });
+  // }
 
   void saveData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

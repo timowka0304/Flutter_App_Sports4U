@@ -44,6 +44,7 @@ dependencies:
   fluttertoast: ^8.0.8
   flutter_launcher_icons:
   shared_preferences:
+  flutter_smart_dialog: ^3.0.2
 
 flutter_icons:
   image_path: "assets/ico/ico.png"

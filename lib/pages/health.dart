@@ -40,6 +40,8 @@ class _HealthState extends State<Health> {
     fToast.init(context);
   }
 
+  int _count = 0;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -398,9 +400,11 @@ class _HealthState extends State<Health> {
                                     (_groupValue5 != 'none')) {
                                   fToast.removeCustomToast();
                                   fToast.removeQueuedCustomToasts();
-                                  saveData();
-                                  Navigator.pushReplacementNamed(
-                                      context, '/result');
+                                  _buildFutureBuilder();
+                                  _buildStreamBuilder();
+                                  //saveData();
+                                  //Navigator.pushReplacementNamed(
+                                  //context, '/result');
                                 } else {
                                   _showToast();
                                 }
@@ -416,6 +420,48 @@ class _HealthState extends State<Health> {
         ),
       ),
     );
+  }
+
+  Widget _buildFutureBuilder() {
+    return Center(
+      child: FutureBuilder<int>(
+        future: _calculateSquare(10),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done)
+            return Text("Square = ${snapshot.data}");
+
+          return CircularProgressIndicator();
+        },
+      ),
+    );
+  }
+
+  // used by FutureBuilder
+  Future<int> _calculateSquare(int num) async {
+    await Future.delayed(Duration(seconds: 5));
+    return num * num;
+  }
+
+  Widget _buildStreamBuilder() {
+    return Center(
+      child: StreamBuilder<int>(
+        stream: _stopwatch(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.active)
+            return Text("Stopwatch = ${snapshot.data}");
+
+          return CircularProgressIndicator();
+        },
+      ),
+    );
+  }
+
+  // used by StreamBuilder
+  Stream<int> _stopwatch() async* {
+    while (true) {
+      await Future.delayed(Duration(seconds: 1));
+      yield _count++;
+    }
   }
 
   void saveData() async {

@@ -1,5 +1,5 @@
-import 'dart:async';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:sport_app/theme/app_theme.dart';
@@ -55,19 +55,11 @@ class _ResultState extends State<Result> {
     Activity("phisisc", "Хоккей", 2, 1, 2, 2, 2, 0)
   ];
 
-  String btnLblOne = "111";
-  String btnLblTwo = "2222";
-  String btnLblThree = "33";
-
-  late Timer _timer;
-
   var name = "name";
   var phone = "phone";
   var nameUser;
-  var firstBtntext;
-  var dataFireBaseType;
-  var nameActivity;
-  late List<int?> userValues;
+  var nameTarget;
+  late List<int> userValues;
 
   @override
   void initState() {
@@ -77,77 +69,60 @@ class _ResultState extends State<Result> {
     //getNameActivity("user:name");
   }
 
+  void _initFirebase() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    int value_1 = prefs.getInt("target:value_1")!.toInt();
+    int value_2 = prefs.getInt("target:value_2")!.toInt();
+    int value_3 = prefs.getInt("target:value_3")!.toInt();
+    int value_4 = prefs.getInt("target:value_4")!.toInt();
+    int value_5 = prefs.getInt("target:value_5")!.toInt();
+    String birth = prefs.getString("user:birth")!;
+    String city = prefs.getString("user:city")!;
+    await FirebaseFirestore.instance.collection("users").add({
+      "name": nameUser,
+      "birth": birth,
+      "city": city,
+      "target": nameTarget,
+      "value_1": value_1,
+      "value_2": value_2,
+      "value_3": value_3,
+      "value_4": value_4,
+      "value_5": value_5
+    });
+  }
+
   Future _getData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     setState(() {
       nameUser = prefs.getString("user:name");
-      print(nameUser);
-      nameActivity = prefs.getString("target:name");
-      print(nameActivity);
-      List<int?> userValues = [
-        prefs.getInt("target:value_1"),
-        prefs.getInt("target:value_2"),
-        prefs.getInt("target:value_3"),
-        prefs.getInt("target:value_4"),
-        prefs.getInt("target:value_5")
+      nameTarget = prefs.getString("target:name");
+      List<int> userValues = [
+        prefs.getInt("target:value_1")!.toInt(),
+        prefs.getInt("target:value_2")!.toInt(),
+        prefs.getInt("target:value_3")!.toInt(),
+        prefs.getInt("target:value_4")!.toInt(),
+        prefs.getInt("target:value_5")!.toInt()
       ];
-      print(userValues);
+
+      for (int i = 0; i < listActivities.length; i++) {
+        int dif = 0;
+        for (int j = 0; j < 5; j++) {
+          if (listActivities[i].type == nameTarget) {
+            listActivities[i].priority[j] == userValues[j] ? dif : dif += 1;
+          } else {
+            dif = 10;
+          }
+        }
+        listActivities[i].difference = dif;
+      }
+
+      listActivities.sort((a, b) => a.difference.compareTo(b.difference));
+      _initFirebase();
     });
   }
-
-  // void _showLoadinWindow() async {
-  //   await Future.delayed(const Duration(microseconds: 1));
-  //   showDialog(
-  //       barrierDismissible: false,
-  //       context: context,
-  //       builder: (BuildContext builderContext) {
-  //         _timer = Timer(const Duration(seconds: 5), () {
-  //           Navigator.of(context, rootNavigator: true).pop();
-  //         });
-
-  //         return AlertDialog(
-  //             backgroundColor: AppTheme.colors.mainOrange,
-  //             title: const Text('Пожалуйста, подождите.',
-  //                 style: TextStyle(color: Colors.white)),
-  //             content: const SingleChildScrollView(
-  //               child: Text('Подбираем виды спорта на основе вашего выбора.',
-  //                   style: TextStyle(color: Colors.white)),
-  //             ));
-
-  //         // return Dialog(
-  //         //   shape: RoundedRectangleBorder(
-  //         //       borderRadius: BorderRadius.circular(20.0)), //this right here
-  //         //   child: Container(
-  //         //     height: 250,
-  //         //     color: AppTheme.colors.mainOrange,
-  //         //     child: Padding(
-  //         //       padding: const EdgeInsets.all(10.0),
-  //         //       child:
-  //         //           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-  //         //         Column(
-  //         //           crossAxisAlignment: CrossAxisAlignment.center,
-  //         //           children: const [
-  //         //             Text('Пожалуйста, подождите.',
-  //         //                 textAlign: TextAlign.center,
-  //         //                 style: TextStyle(color: Colors.white, fontSize: 24)),
-  //         //             SizedBox(height: 30),
-  //         //             Text('Подбираем виды спорта на основе вашего выбора.',
-  //         //                 textAlign: TextAlign.center,
-  //         //                 style: TextStyle(color: Colors.white, fontSize: 12)),
-  //         //           ],
-  //         //         )
-  //         //       ]),
-  //         //     ),
-  //         //   ),
-  //         // );
-  //       }).then((val) {
-  //     if (_timer.isActive) {
-  //       _timer.cancel();
-  //       loadinIsDone = true;
-  //     }
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -169,10 +144,8 @@ class _ResultState extends State<Result> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Column(children: <Widget>[
-                    Text(
-                        nameUser.substring(0) +
-                            ", рекомендуем\nэти виды спорта",
-                        style: const TextStyle(
+                    const Text("Рекомендуем\nэти виды спорта",
+                        style: TextStyle(
                             fontStyle: FontStyle.italic,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -184,13 +157,15 @@ class _ResultState extends State<Result> {
                         width: 250,
                         height: 50,
                         child: ElevatedButton(
-                            child: Text("none",
+                            child: Text(listActivities[0].name,
                                 style: const TextStyle(fontSize: 20)),
                             style: ButtonStyle(
-                                foregroundColor: MaterialStateProperty.all<Color>(
-                                    Colors.white),
-                                backgroundColor: MaterialStateProperty.all<Color>(
-                                    AppTheme.colors.mainOrange),
+                                foregroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                        Colors.white),
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                        AppTheme.colors.mainOrange),
                                 shape: MaterialStateProperty.all<
                                         RoundedRectangleBorder>(
                                     RoundedRectangleBorder(
@@ -198,7 +173,9 @@ class _ResultState extends State<Result> {
                                             BorderRadius.circular(30.0),
                                         side: BorderSide(
                                             color: AppTheme.colors.mainOrange)))),
-                            onPressed: () {}),
+                            onPressed: () {
+                              launchMap(listActivities[0].name);
+                            }),
                       ),
                     ),
                     const SizedBox(
@@ -208,30 +185,8 @@ class _ResultState extends State<Result> {
                       width: 250,
                       height: 50,
                       child: ElevatedButton(
-                          child:
-                              Text(name, style: const TextStyle(fontSize: 20)),
-                          style: ButtonStyle(
-                              foregroundColor: MaterialStateProperty.all<Color>(
-                                  Colors.white),
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                  AppTheme.colors.mainOrange),
-                              shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(30.0),
-                                      side: BorderSide(
-                                          color: AppTheme.colors.mainOrange)))),
-                          onPressed: () {}),
-                    ),
-                    const SizedBox(
-                      height: 50,
-                    ),
-                    SizedBox(
-                      width: 250,
-                      height: 50,
-                      child: ElevatedButton(
-                          child:
-                              Text(phone, style: const TextStyle(fontSize: 20)),
+                          child: Text(listActivities[1].name,
+                              style: const TextStyle(fontSize: 20)),
                           style: ButtonStyle(
                               foregroundColor: MaterialStateProperty.all<Color>(
                                   Colors.white),
@@ -244,7 +199,31 @@ class _ResultState extends State<Result> {
                                       side: BorderSide(
                                           color: AppTheme.colors.mainOrange)))),
                           onPressed: () {
-                            launchMap("футбол секции рядом");
+                            launchMap(listActivities[1].name);
+                          }),
+                    ),
+                    const SizedBox(
+                      height: 50,
+                    ),
+                    SizedBox(
+                      width: 250,
+                      height: 50,
+                      child: ElevatedButton(
+                          child: Text(listActivities[2].name,
+                              style: const TextStyle(fontSize: 20)),
+                          style: ButtonStyle(
+                              foregroundColor: MaterialStateProperty.all<Color>(
+                                  Colors.white),
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  AppTheme.colors.mainOrange),
+                              shape: MaterialStateProperty.all<
+                                      RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30.0),
+                                      side: BorderSide(
+                                          color: AppTheme.colors.mainOrange)))),
+                          onPressed: () {
+                            launchMap(listActivities[2].name);
                           }),
                     ),
                     const SizedBox(

@@ -64,42 +64,72 @@ class _ResultState extends State<Result> {
   var phone = "phone";
   var dataFireBaseArr;
   var dataFireBaseType;
+  bool loadinIsDone = false;
 
   //void initFirebase() async {}
 
   @override
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
-    _showLoadinWindow();
     super.initState();
   }
 
   void _showLoadinWindow() async {
-    showDialog(
+    await Future.delayed(const Duration(microseconds: 1));
+    await showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (BuildContext builderContext) {
           _timer = Timer(const Duration(seconds: 5), () {
-            Navigator.of(context).pop();
+            Navigator.of(context, rootNavigator: true).pop();
           });
 
           return AlertDialog(
-            backgroundColor: AppTheme.colors.mainOrange,
-            title: const Text('Пожалуйста, подождите.',
-                style: TextStyle(color: Colors.white)),
-            content: const SingleChildScrollView(
-              child: Text('Подбираем виды спорта на основе вашего выбора.',
+              backgroundColor: AppTheme.colors.mainOrange,
+              title: const Text('Пожалуйста, подождите.',
                   style: TextStyle(color: Colors.white)),
-            ),
-          );
+              content: const SingleChildScrollView(
+                child: Text('Подбираем виды спорта на основе вашего выбора.',
+                    style: TextStyle(color: Colors.white)),
+              ));
+
+          // return Dialog(
+          //   shape: RoundedRectangleBorder(
+          //       borderRadius: BorderRadius.circular(20.0)), //this right here
+          //   child: Container(
+          //     height: 250,
+          //     color: AppTheme.colors.mainOrange,
+          //     child: Padding(
+          //       padding: const EdgeInsets.all(10.0),
+          //       child:
+          //           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          //         Column(
+          //           crossAxisAlignment: CrossAxisAlignment.center,
+          //           children: const [
+          //             Text('Пожалуйста, подождите.',
+          //                 textAlign: TextAlign.center,
+          //                 style: TextStyle(color: Colors.white, fontSize: 24)),
+          //             SizedBox(height: 30),
+          //             Text('Подбираем виды спорта на основе вашего выбора.',
+          //                 textAlign: TextAlign.center,
+          //                 style: TextStyle(color: Colors.white, fontSize: 12)),
+          //           ],
+          //         )
+          //       ]),
+          //     ),
+          //   ),
+          // );
         }).then((val) {
       if (_timer.isActive) {
         _timer.cancel();
+        loadinIsDone = true;
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    _showLoadinWindow();
     return SafeArea(
       child: Scaffold(
         body: Stack(

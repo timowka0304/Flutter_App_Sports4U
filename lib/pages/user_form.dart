@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:sport_app/theme/app_theme.dart';
 import 'package:intl/intl.dart';
-
 import 'package:fluttertoast/fluttertoast.dart';
-
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MaterialApp(
     debugShowCheckedModeBanner: false,
+    localizationsDelegates: [
+      GlobalMaterialLocalizations.delegate,
+      GlobalWidgetsLocalizations.delegate,
+    ],
+    supportedLocales: [
+      Locale('en', 'US'),
+      Locale('ru', 'RU'),
+    ],
     home: UserForm(),
   ));
 }
@@ -25,10 +32,6 @@ class _UserFormState extends State<UserForm> {
   late bool stateFirstText;
   late bool stateSecondText;
   late bool stateThirdText;
-
-  late String textForm1;
-  late String textForm2;
-  late String textForm3;
 
   TextEditingController dateFormController = TextEditingController();
   TextEditingController nameFormController = TextEditingController();
@@ -102,7 +105,7 @@ class _UserFormState extends State<UserForm> {
                                 decoration: const InputDecoration(
                                   filled: true,
                                   hintStyle: TextStyle(color: Colors.white70),
-                                  hintText: 'Имя Фамилия Отчество',
+                                  hintText: 'Фамилия Имя Отчество',
                                   errorStyle: TextStyle(
                                       color: Colors.white,
                                       fontSize: 12,
@@ -134,10 +137,11 @@ class _UserFormState extends State<UserForm> {
                               ),
                               child: TextFormField(
                                 controller: dateFormController,
+                                keyboardType: TextInputType.number,
                                 decoration: const InputDecoration(
                                   filled: true,
                                   hintStyle: TextStyle(color: Colors.white70),
-                                  hintText: 'Дата рождения',
+                                  hintText: 'День-месяц-год рождения',
                                   errorStyle: TextStyle(
                                       color: Colors.white, fontSize: 10),
                                   border: InputBorder.none,
@@ -145,44 +149,6 @@ class _UserFormState extends State<UserForm> {
                                 ),
                                 style: const TextStyle(color: Colors.white),
                                 enableInteractiveSelection: false,
-                                onTap: () async {
-                                  FocusScope.of(context)
-                                      .requestFocus(FocusNode());
-                                  showDatePicker(
-                                          context: context,
-                                          initialDate: DateTime.now(),
-                                          helpText: 'Дата рождения',
-                                          cancelText: 'Отмена',
-                                          confirmText: 'Выбрать',
-                                          errorFormatText:
-                                              'Введите правильную дату',
-                                          errorInvalidText:
-                                              'Введите правильную дату',
-                                          fieldLabelText: 'Введите дату',
-                                          fieldHintText: 'Месяц/день/год',
-                                          builder: (context, child) {
-                                            return Theme(
-                                              data: Theme.of(context).copyWith(
-                                                colorScheme: ColorScheme.light(
-                                                    primary: AppTheme
-                                                        .colors.mainOrange,
-                                                    onPrimary:
-                                                        AppTheme.colors.white,
-                                                    onSurface:
-                                                        AppTheme.colors.black),
-                                              ),
-                                              child: child!,
-                                            );
-                                          },
-                                          firstDate: DateTime(2003),
-                                          lastDate: DateTime.now())
-                                      .then((date) {
-                                    if (date != null) {
-                                      dateFormController.text =
-                                          DateFormat('dd-MM-yyyy').format(date);
-                                    }
-                                  });
-                                },
                                 validator: (value) {
                                   if (value!.isNotEmpty) {
                                     stateSecondText = true;
@@ -286,16 +252,9 @@ class _UserFormState extends State<UserForm> {
 
   void saveData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var _name = nameFormController.text[0].toUpperCase() +
-        nameFormController.text.substring(1, nameFormController.text.length);
-    var _city = cityFormController.text[0].toUpperCase() +
-        cityFormController.text.substring(1, cityFormController.text.length);
-    prefs.setString("user:name", _name);
+    prefs.setString("user:name", nameFormController.text);
     prefs.setString("user:birth", dateFormController.text);
-    prefs.setString("user:city", _city);
-    print(prefs.getString("user:name"));
-    print(prefs.getString("user:birth"));
-    print(prefs.getString("user:city"));
+    prefs.setString("user:city", cityFormController.text);
   }
 
   _showToast() {

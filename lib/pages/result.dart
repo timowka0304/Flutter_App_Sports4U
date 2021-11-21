@@ -60,6 +60,7 @@ class _ResultState extends State<Result> {
   var nameUser;
   var nameTarget;
   late List<int> userValues;
+  late String city;
 
   @override
   void initState() {
@@ -79,7 +80,7 @@ class _ResultState extends State<Result> {
     int value_4 = prefs.getInt("target:value_4")!.toInt();
     int value_5 = prefs.getInt("target:value_5")!.toInt();
     String birth = prefs.getString("user:birth")!;
-    String city = prefs.getString("user:city")!;
+    city = prefs.getString("user:city")!;
     await FirebaseFirestore.instance.collection("users").add({
       "name": nameUser,
       "birth": birth,
@@ -174,7 +175,9 @@ class _ResultState extends State<Result> {
                                         side: BorderSide(
                                             color: AppTheme.colors.mainOrange)))),
                             onPressed: () {
-                              launchMap(listActivities[0].name);
+                              launchMap(city +
+                                  listActivities[0].name +
+                                  " cпортинвая школа ");
                             }),
                       ),
                     ),
@@ -199,7 +202,9 @@ class _ResultState extends State<Result> {
                                       side: BorderSide(
                                           color: AppTheme.colors.mainOrange)))),
                           onPressed: () {
-                            launchMap(listActivities[1].name);
+                            launchMap(city +
+                                listActivities[1].name +
+                                " cпортинвая школа ");
                           }),
                     ),
                     const SizedBox(
@@ -223,7 +228,9 @@ class _ResultState extends State<Result> {
                                       side: BorderSide(
                                           color: AppTheme.colors.mainOrange)))),
                           onPressed: () {
-                            launchMap(listActivities[2].name);
+                            launchMap(city +
+                                listActivities[2].name +
+                                " cпортинвая школа ");
                           }),
                     ),
                     const SizedBox(

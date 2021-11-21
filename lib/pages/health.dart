@@ -31,7 +31,6 @@ class _HealthState extends State<Health> {
   String _groupValue4 = 'none';
   String _groupValue5 = 'none';
   late FToast fToast;
-  late Timer _timer;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -41,8 +40,6 @@ class _HealthState extends State<Health> {
     fToast = FToast();
     fToast.init(context);
   }
-
-  int _count = 0;
 
   @override
   Widget build(BuildContext context) {

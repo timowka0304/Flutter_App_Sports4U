@@ -66,105 +66,92 @@ class _ResultState extends State<Result> {
   var nameUser;
   var firstBtntext;
   var dataFireBaseType;
-  bool loadinIsDone = false;
-
   var nameActivity;
-  List<int> userValues = [];
-
-  //void initFirebase() async {}
+  late List<int?> userValues;
 
   @override
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
     super.initState();
-    getName();
+    _getData();
+    //getNameActivity("user:name");
   }
 
-  Future getName() async {
+  Future _getData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     setState(() {
       nameUser = prefs.getString("user:name");
+      print(nameUser);
       nameActivity = prefs.getString("target:name");
-      if (nameActivity == "health") {
-        List<int> userValues = [
-          prefs.getInt("target:health:value_1")!.toInt(),
-          prefs.getInt("target:health:value_2")!.toInt(),
-          prefs.getInt("target:health:value_3")!.toInt(),
-          prefs.getInt("target:health:value_14")!.toInt(),
-          prefs.getInt("target:health:value_5")!.toInt()
-        ];
-      }
-      if (nameActivity == "phisics") {
-        List<int> userValues = [
-          prefs.getInt("target:phisics:value_1")!.toInt(),
-          prefs.getInt("target:phisics:value_2")!.toInt(),
-          prefs.getInt("target:phisics:value_3")!.toInt(),
-          prefs.getInt("target:phisics:value_14")!.toInt(),
-          prefs.getInt("target:phisics:value_5")!.toInt()
-        ];
-      }
       print(nameActivity);
+      List<int?> userValues = [
+        prefs.getInt("target:value_1"),
+        prefs.getInt("target:value_2"),
+        prefs.getInt("target:value_3"),
+        prefs.getInt("target:value_4"),
+        prefs.getInt("target:value_5")
+      ];
       print(userValues);
     });
   }
 
-  void _showLoadinWindow() async {
-    await Future.delayed(const Duration(microseconds: 1));
-    await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (BuildContext builderContext) {
-          _timer = Timer(const Duration(seconds: 5), () {
-            Navigator.of(context, rootNavigator: true).pop();
-          });
+  // void _showLoadinWindow() async {
+  //   await Future.delayed(const Duration(microseconds: 1));
+  //   showDialog(
+  //       barrierDismissible: false,
+  //       context: context,
+  //       builder: (BuildContext builderContext) {
+  //         _timer = Timer(const Duration(seconds: 5), () {
+  //           Navigator.of(context, rootNavigator: true).pop();
+  //         });
 
-          return AlertDialog(
-              backgroundColor: AppTheme.colors.mainOrange,
-              title: const Text('Пожалуйста, подождите.',
-                  style: TextStyle(color: Colors.white)),
-              content: const SingleChildScrollView(
-                child: Text('Подбираем виды спорта на основе вашего выбора.',
-                    style: TextStyle(color: Colors.white)),
-              ));
+  //         return AlertDialog(
+  //             backgroundColor: AppTheme.colors.mainOrange,
+  //             title: const Text('Пожалуйста, подождите.',
+  //                 style: TextStyle(color: Colors.white)),
+  //             content: const SingleChildScrollView(
+  //               child: Text('Подбираем виды спорта на основе вашего выбора.',
+  //                   style: TextStyle(color: Colors.white)),
+  //             ));
 
-          // return Dialog(
-          //   shape: RoundedRectangleBorder(
-          //       borderRadius: BorderRadius.circular(20.0)), //this right here
-          //   child: Container(
-          //     height: 250,
-          //     color: AppTheme.colors.mainOrange,
-          //     child: Padding(
-          //       padding: const EdgeInsets.all(10.0),
-          //       child:
-          //           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          //         Column(
-          //           crossAxisAlignment: CrossAxisAlignment.center,
-          //           children: const [
-          //             Text('Пожалуйста, подождите.',
-          //                 textAlign: TextAlign.center,
-          //                 style: TextStyle(color: Colors.white, fontSize: 24)),
-          //             SizedBox(height: 30),
-          //             Text('Подбираем виды спорта на основе вашего выбора.',
-          //                 textAlign: TextAlign.center,
-          //                 style: TextStyle(color: Colors.white, fontSize: 12)),
-          //           ],
-          //         )
-          //       ]),
-          //     ),
-          //   ),
-          // );
-        }).then((val) {
-      if (_timer.isActive) {
-        _timer.cancel();
-        loadinIsDone = true;
-      }
-    });
-  }
+  //         // return Dialog(
+  //         //   shape: RoundedRectangleBorder(
+  //         //       borderRadius: BorderRadius.circular(20.0)), //this right here
+  //         //   child: Container(
+  //         //     height: 250,
+  //         //     color: AppTheme.colors.mainOrange,
+  //         //     child: Padding(
+  //         //       padding: const EdgeInsets.all(10.0),
+  //         //       child:
+  //         //           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+  //         //         Column(
+  //         //           crossAxisAlignment: CrossAxisAlignment.center,
+  //         //           children: const [
+  //         //             Text('Пожалуйста, подождите.',
+  //         //                 textAlign: TextAlign.center,
+  //         //                 style: TextStyle(color: Colors.white, fontSize: 24)),
+  //         //             SizedBox(height: 30),
+  //         //             Text('Подбираем виды спорта на основе вашего выбора.',
+  //         //                 textAlign: TextAlign.center,
+  //         //                 style: TextStyle(color: Colors.white, fontSize: 12)),
+  //         //           ],
+  //         //         )
+  //         //       ]),
+  //         //     ),
+  //         //   ),
+  //         // );
+  //       }).then((val) {
+  //     if (_timer.isActive) {
+  //       _timer.cancel();
+  //       loadinIsDone = true;
+  //     }
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
-    _showLoadinWindow();
+    //_showLoadinWindow();
     return SafeArea(
       child: Scaffold(
         body: Stack(
@@ -183,7 +170,7 @@ class _ResultState extends State<Result> {
                 children: [
                   Column(children: <Widget>[
                     Text(
-                        nameUser.substring(0, nameUser.indexOf(' ', 0)) +
+                        nameUser.substring(0) +
                             ", рекомендуем\nэти виды спорта",
                         style: const TextStyle(
                             fontStyle: FontStyle.italic,

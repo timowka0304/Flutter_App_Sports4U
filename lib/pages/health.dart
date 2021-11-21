@@ -424,11 +424,12 @@ class _HealthState extends State<Health> {
 
   void saveData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt('target:health:value_1', int.parse(_groupValue1));
-    prefs.setInt('target:health:value_2', int.parse(_groupValue2));
-    prefs.setInt('target:health:value_3', int.parse(_groupValue3));
-    prefs.setInt('target:health:value_4', int.parse(_groupValue4));
-    prefs.setInt('target:health:value_5', int.parse(_groupValue5));
+    print(int.parse(_groupValue1));
+    prefs.setInt('target:value_1', int.parse(_groupValue1));
+    prefs.setInt('target:value_2', int.parse(_groupValue2));
+    prefs.setInt('target:value_3', int.parse(_groupValue3));
+    prefs.setInt('target:value_4', int.parse(_groupValue4));
+    prefs.setInt('target:value_5', int.parse(_groupValue5));
     prefs.setString("target:name", "health");
   }
 

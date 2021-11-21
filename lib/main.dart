@@ -137,7 +137,6 @@ class _MyAppState extends State<MyApp> {
                                   await SharedPreferences.getInstance();
                               if (prefs.getString("user:name") != null) {
                                 _btnEnabled = true;
-                                print(prefs.getString('user:name'));
                               }
                               if (_formKey.currentState.validate()) {
                                 if (_btnEnabled == true) {

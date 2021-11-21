@@ -402,10 +402,9 @@ class _HealthState extends State<Health> {
                                     (_groupValue5 != 'none')) {
                                   fToast.removeCustomToast();
                                   fToast.removeQueuedCustomToasts();
-                                  _showLoadinWindow();
-                                  //saveData();
-                                  //Navigator.pushReplacementNamed(
-                                  //context, '/result');
+                                  saveData();
+                                  Navigator.pushReplacementNamed(
+                                      context, '/result');
                                 } else {
                                   _showToast();
                                 }
@@ -421,30 +420,6 @@ class _HealthState extends State<Health> {
         ),
       ),
     );
-  }
-
-  void _showLoadinWindow() async {
-    showDialog(
-        context: context,
-        builder: (BuildContext builderContext) {
-          _timer = Timer(const Duration(seconds: 5), () {
-            Navigator.of(context).pop();
-          });
-
-          return AlertDialog(
-            backgroundColor: AppTheme.colors.mainOrange,
-            title: const Text('Пожалуйста, подождите.',
-                style: TextStyle(color: Colors.white)),
-            content: const SingleChildScrollView(
-              child: Text('Подбираем виды спорта на основе вашего выбора.',
-                  style: TextStyle(color: Colors.white)),
-            ),
-          );
-        }).then((val) {
-      if (_timer.isActive) {
-        _timer.cancel();
-      }
-    });
   }
 
   void saveData() async {

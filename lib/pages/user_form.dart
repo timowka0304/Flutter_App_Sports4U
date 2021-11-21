@@ -286,9 +286,13 @@ class _UserFormState extends State<UserForm> {
 
   void saveData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("user:name", nameFormController.text);
+    var _name = nameFormController.text[0].toUpperCase() +
+        nameFormController.text.substring(1, nameFormController.text.length);
+    var _city = cityFormController.text[0].toUpperCase() +
+        cityFormController.text.substring(1, cityFormController.text.length);
+    prefs.setString("user:name", _name);
     prefs.setString("user:birth", dateFormController.text);
-    prefs.setString("user:city", cityFormController.text);
+    prefs.setString("user:city", _city);
     print(prefs.getString("user:name"));
     print(prefs.getString("user:birth"));
     print(prefs.getString("user:city"));

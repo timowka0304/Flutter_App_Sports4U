@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:sport_app/theme/app_theme.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -62,9 +63,13 @@ class _ResultState extends State<Result> {
 
   var name = "name";
   var phone = "phone";
-  var dataFireBaseArr;
+  var nameUser;
+  var firstBtntext;
   var dataFireBaseType;
   bool loadinIsDone = false;
+
+  var nameActivity;
+  List<int> userValues = [];
 
   //void initFirebase() async {}
 
@@ -72,6 +77,36 @@ class _ResultState extends State<Result> {
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
     super.initState();
+    getName();
+  }
+
+  Future getName() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      nameUser = prefs.getString("user:name");
+      nameActivity = prefs.getString("target:name");
+      if (nameActivity == "health") {
+        List<int> userValues = [
+          prefs.getInt("target:health:value_1")!.toInt(),
+          prefs.getInt("target:health:value_2")!.toInt(),
+          prefs.getInt("target:health:value_3")!.toInt(),
+          prefs.getInt("target:health:value_14")!.toInt(),
+          prefs.getInt("target:health:value_5")!.toInt()
+        ];
+      }
+      if (nameActivity == "phisics") {
+        List<int> userValues = [
+          prefs.getInt("target:phisics:value_1")!.toInt(),
+          prefs.getInt("target:phisics:value_2")!.toInt(),
+          prefs.getInt("target:phisics:value_3")!.toInt(),
+          prefs.getInt("target:phisics:value_14")!.toInt(),
+          prefs.getInt("target:phisics:value_5")!.toInt()
+        ];
+      }
+      print(nameActivity);
+      print(userValues);
+    });
   }
 
   void _showLoadinWindow() async {
@@ -147,8 +182,10 @@ class _ResultState extends State<Result> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Column(children: <Widget>[
-                    const Text("Рекомендуем эти\nвиды спорта",
-                        style: TextStyle(
+                    Text(
+                        nameUser.substring(0, nameUser.indexOf(' ', 0)) +
+                            ", рекомендуем\nэти виды спорта",
+                        style: const TextStyle(
                             fontStyle: FontStyle.italic,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -160,7 +197,7 @@ class _ResultState extends State<Result> {
                         width: 250,
                         height: 50,
                         child: ElevatedButton(
-                            child: Text(dataFireBaseType.toString(),
+                            child: Text("none",
                                 style: const TextStyle(fontSize: 20)),
                             style: ButtonStyle(
                                 foregroundColor: MaterialStateProperty.all<Color>(

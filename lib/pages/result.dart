@@ -48,15 +48,13 @@ class _ResultState extends State<Result> {
     Activity("health", "Плавание", 2, 2, 2, 2, 2, 0),
     Activity("health", "Футбол", 2, 1, 2, 1, 2, 0),
     Activity("health", "Хоккей", 2, 1, 2, 1, 2, 0),
-    Activity("phisisc", "Боевые искусства", 2, 2, 2, 2, 2, 0),
-    Activity("phisisc", "Волейбол", 1, 2, 2, 1, 1, 0),
-    Activity("phisisc", "Плавание", 2, 1, 2, 1, 1, 0),
-    Activity("phisisc", "Футбол", 2, 1, 2, 2, 2, 0),
-    Activity("phisisc", "Хоккей", 2, 1, 2, 2, 2, 0)
+    Activity("phisics", "Боевые искусства", 2, 2, 2, 2, 2, 0),
+    Activity("phisics", "Волейбол", 1, 2, 2, 1, 1, 0),
+    Activity("phisics", "Плавание", 2, 1, 2, 1, 1, 0),
+    Activity("phisics", "Футбол", 2, 1, 2, 2, 2, 0),
+    Activity("phisics", "Хоккей", 2, 1, 2, 2, 2, 0)
   ];
 
-  var name = "name";
-  var phone = "phone";
   var nameUser;
   var nameTarget;
   late List<int> userValues;
@@ -110,17 +108,22 @@ class _ResultState extends State<Result> {
 
       for (int i = 0; i < listActivities.length; i++) {
         int dif = 0;
-        for (int j = 0; j < 5; j++) {
-          if (listActivities[i].type == nameTarget) {
+        if (listActivities[i].type == nameTarget) {
+          for (int j = 0; j < 5; j++) {
             listActivities[i].priority[j] == userValues[j] ? dif : dif += 1;
-          } else {
-            dif = 10;
           }
+        } else {
+          dif = 10;
         }
         listActivities[i].difference = dif;
       }
 
       listActivities.sort((a, b) => a.difference.compareTo(b.difference));
+      for (int i = 0; i < listActivities.length; i++) {
+        print(listActivities[i].name);
+        print(listActivities[i].difference);
+        print("\n");
+      }
       _initFirebase();
     });
   }
@@ -177,7 +180,7 @@ class _ResultState extends State<Result> {
                             onPressed: () {
                               launchMap(city +
                                   listActivities[0].name +
-                                  " cпортинвая школа ");
+                                  " cпортивная школа ");
                             }),
                       ),
                     ),
@@ -204,7 +207,7 @@ class _ResultState extends State<Result> {
                           onPressed: () {
                             launchMap(city +
                                 listActivities[1].name +
-                                " cпортинвая школа ");
+                                " cпортивная школа ");
                           }),
                     ),
                     const SizedBox(
@@ -230,7 +233,7 @@ class _ResultState extends State<Result> {
                           onPressed: () {
                             launchMap(city +
                                 listActivities[2].name +
-                                " cпортинвая школа ");
+                                " cпортивная школа ");
                           }),
                     ),
                     const SizedBox(

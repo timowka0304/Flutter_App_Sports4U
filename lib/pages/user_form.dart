@@ -141,7 +141,7 @@ class _UserFormState extends State<UserForm> {
                                 decoration: const InputDecoration(
                                   filled: true,
                                   hintStyle: TextStyle(color: Colors.white70),
-                                  hintText: 'День-месяц-год рождения',
+                                  hintText: 'Дата рождения',
                                   errorStyle: TextStyle(
                                       color: Colors.white, fontSize: 10),
                                   border: InputBorder.none,
